@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>BIOBUZZ Driver Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Saira+Condensed:wght@500;600;700&display=swap">
+<style>
+  :root {
+    color-scheme: light;
+    --bg: #eef1f4; --panel: #ffffff; --ink: #151a22; --muted: #5b6574; --line: #d5dbe3;
+    --accent: #c98f00; --accent-ink: #1b1400; --red: #cf3229; --blue: #2d5bd7; --stage: #292e38;
+    --display: "Saira Condensed", "Arial Narrow", "Roboto Condensed", sans-serif;
+    --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --bg: #0f1318; --panel: #171c23; --ink: #e7ecf2; --muted: #8b96a5; --line: #28303a;
+      --accent: #f2c230; --red: #f0564d; --blue: #5b86f5;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --bg: #0f1318; --panel: #171c23; --ink: #e7ecf2; --muted: #8b96a5; --line: #28303a;
+    --accent: #f2c230; --red: #f0564d; --blue: #5b86f5;
+  }
+  [hidden] { display: none !important; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; padding-block: 24px 48px; display: grid; gap: 20px; }
+  header { display: grid; gap: 6px; }
+  .eyebrow { font: 600 12px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+  h1 { margin: 0; font: 700 clamp(30px, 5vw, 44px)/1.02 var(--display); letter-spacing: .01em; text-wrap: balance; }
+  h1 span { color: var(--accent); }
+  .lede { margin: 0; max-width: 70ch; color: var(--muted); }
+
+  .viewer { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .stage { position: relative; aspect-ratio: 16 / 10; max-height: 76vh; width: 100%; background: var(--stage); }
+  .stage canvas { display: block; width: 100%; height: 100%; outline: none; }
+  .loading { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px; color: #e7ecf2; text-align: center; padding-inline: 16px; }
+  .loading strong { font: 600 22px/1.1 var(--display); letter-spacing: .02em; }
+  .bar { width: min(320px, 70vw); height: 6px; border-radius: 3px; background: rgb(255 255 255 / .15); overflow: hidden; }
+  .bar i { display: block; height: 100%; width: 0; background: #f2c230; transition: width .2s; }
+  .loading small { color: #aab3c0; font-size: 13px; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: space-between; padding: 10px 14px; border-top: 1px solid var(--line); }
+  .pad { display: inline-flex; align-items: center; gap: 8px; font: 500 13px var(--body); color: var(--muted); }
+  .pad i { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+  .pad.on i { background: #2fa84f; }
+  .pad.on { color: var(--ink); }
+  .btn { border: 1px solid var(--line); background: transparent; color: var(--ink); font: 500 13px var(--body); padding: 7px 14px; border-radius: 7px; cursor: pointer; }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .below { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 24px; }
+  @media (max-width: 800px) { .below { grid-template-columns: 1fr; } }
+  h2 { margin: 0 0 10px; font: 600 20px/1.2 var(--display); letter-spacing: .02em; }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font: 600 11px var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+  kbd { font: 500 12px var(--mono); padding: 1px 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; background: var(--bg); white-space: nowrap; }
+  ol, ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+  .note { margin: 14px 0 0; font-size: 13px; color: var(--muted); max-width: 68ch; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">FTC 2026–27 · BIOBUZZ simulator · driver practice</div>
+    <h1>Drive the robot, <span>tip the Hive</span></h1>
+    <p class="lede">A 2:00 TELEOP period on the team's physics simulator, running in your browser. Plug in a gamepad (Logitech F310, Xbox or PlayStation), click the field, then move a stick to start the clock. You drive from the red alliance wall, like at a real match.</p>
+  </header>
+
+  <div class="viewer">
+    <div class="stage">
+      <canvas id="unity-canvas" tabindex="-1"></canvas>
+      <div class="loading" id="loading">
+        <strong>Loading the field</strong>
+        <div class="bar"><i id="progress"></i></div>
+        <small id="loadText">About 21 MB the first time, then cached</small>
+      </div>
+    </div>
+    <div class="toolbar">
+      <span class="pad" id="padStatus"><i></i><span>No gamepad yet: press any button on it</span></span>
+      <span style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn" id="restart" type="button">Restart match</button>
+        <button class="btn primary" id="fullscreen" type="button">Full screen</button>
+      </span>
+    </div>
+  </div>
+
+  <div class="below">
+    <section>
+      <h2>Controls</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Action</th><th>Gamepad</th><th>Keyboard</th></tr></thead>
+          <tbody>
+            <tr><td>Drive and strafe</td><td>Left stick</td><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd></td></tr>
+            <tr><td>Turn</td><td>Right stick</td><td><kbd>Q</kbd> <kbd>E</kbd></td></tr>
+            <tr><td>Slow mode</td><td><kbd>B</kbd> / Circle (toggle)</td><td><kbd>Shift</kbd> (hold)</td></tr>
+            <tr><td>Field-centric drive</td><td><kbd>X</kbd> / Square (toggle)</td><td><kbd>G</kbd></td></tr>
+            <tr><td>Intake / reverse</td><td>Right / left trigger (hold)</td><td><kbd>I</kbd> / <kbd>O</kbd> (toggle)</td></tr>
+            <tr><td>Launcher speed</td><td>Right / left bumper (±20 %)</td><td><kbd>1</kbd>–<kbd>5</kbd>, <kbd>0</kbd> off</td></tr>
+            <tr><td>Auto-aim at own Cell</td><td><kbd>Y</kbd> / Triangle</td><td><kbd>F</kbd></td></tr>
+            <tr><td>Fire</td><td><kbd>A</kbd> / Cross (hold)</td><td><kbd>Space</kbd> (hold)</td></tr>
+            <tr><td>Restart match</td><td>Start / Options</td><td><kbd>R</kbd></td></tr>
+            <tr><td>Camera</td><td colspan="2">Drag to orbit, scroll to zoom · <kbd>H</kbd> score details · <kbd>L</kbd> referee log · <kbd>K</kbd> controls</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note">A second gamepad can run the intake, launcher and fire while the first one drives, like gamepad2 on a Driver Station.</p>
+    </section>
+    <section>
+      <h2>How to score</h2>
+      <ol>
+        <li>Hold the intake and drive over Pollen (yellow). The robot holds at most 4 balls (G407).</li>
+        <li>Face your upward Cell on the red Hive, press auto-aim, then hold fire.</li>
+        <li>8 Pollen in the upward Cell tips the Hive: 20 points, and the other Cell comes up.</li>
+        <li>Score Flowers and the Garden as well. Your best score stays in this browser.</li>
+      </ol>
+      <p class="note">The robot is a placeholder (18 in / 0.46 m mecanum, 13 kg / 28.7 lb) until the real robot is measured. Physics, scoring and fouls come from the same simulator the team's AI trains in.</p>
+    </section>
+  </div>
+</div>
+
+<script src="Build/web-practice.loader.js"></script>
+<script>
+  const canvas = document.getElementById("unity-canvas");
+  const loading = document.getElementById("loading");
+  const bar = document.getElementById("progress");
+  let unity = null;
+
+  createUnityInstance(canvas, {
+    dataUrl: "Build/web-practice.data.unityweb",
+    frameworkUrl: "Build/web-practice.framework.js.unityweb",
+    codeUrl: "Build/web-practice.wasm.unityweb",
+    streamingAssetsUrl: "StreamingAssets",
+    companyName: "ReachingTheSky",
+    productName: "BIOBUZZ Driver Practice",
+    productVersion: "1.0",
+    keyboardListeningElement: canvas,
+    devicePixelRatio: Math.min(window.devicePixelRatio || 1, 2),
+  }, p => { bar.style.width = `${Math.round(p * 100)}%`; })
+    .then(instance => { unity = instance; loading.hidden = true; canvas.focus(); })
+    .catch(err => {
+      loading.querySelector("strong").textContent = "The simulator could not start";
+      document.getElementById("loadText").textContent = String(err && err.message || err) + " Try a current Chrome, Edge, Firefox or Safari on a computer.";
+    });
+
+  canvas.addEventListener("pointerdown", () => canvas.focus());
+  // Game keys must not scroll the page while the field has focus (Space fires, arrows/Tab are used in the sim).
+  canvas.addEventListener("keydown", e => {
+    if ([" ", "Tab", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "PageUp", "PageDown", "Home", "End"].includes(e.key)) e.preventDefault();
+  });
+  canvas.addEventListener("wheel", e => e.preventDefault(), { passive: false });
+  document.getElementById("fullscreen").addEventListener("click", () => { if (unity) unity.SetFullscreen(1); });
+  document.getElementById("restart").addEventListener("click", () => {
+    if (unity) unity.SendMessage("UI", "Restart");
+    canvas.focus();
+  });
+
+  const pad = document.getElementById("padStatus");
+  function padState() {
+    const pads = [...(navigator.getGamepads ? navigator.getGamepads() : [])].filter(Boolean);
+    pad.classList.toggle("on", pads.length > 0);
+    pad.lastElementChild.textContent = pads.length
+      ? `${pads.length} gamepad${pads.length > 1 ? "s" : ""} connected: ${pads[0].id.replace(/\s*\(.*$/, "")}`
+      : "No gamepad yet: press any button on it";
+  }
+  window.addEventListener("gamepadconnected", padState);
+  window.addEventListener("gamepaddisconnected", padState);
+  setInterval(padState, 1500);
+</script>
+</body>
+</html>
