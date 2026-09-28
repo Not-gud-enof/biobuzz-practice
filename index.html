@@ -128,7 +128,7 @@
   </div>
 </div>
 
-<script src="Build/web-practice.loader.js"></script>
+<script src="Build/ac145a2adf29b2542a261c7428b1320b.loader.js"></script>
 <script>
   const canvas = document.getElementById("unity-canvas");
   const loading = document.getElementById("loading");
@@ -136,9 +136,9 @@
   let unity = null;
 
   createUnityInstance(canvas, {
-    dataUrl: "Build/web-practice.data.unityweb",
-    frameworkUrl: "Build/web-practice.framework.js.unityweb",
-    codeUrl: "Build/web-practice.wasm.unityweb",
+    dataUrl: "Build/e070a5a7577d6c1caa72860aafd27632.data.unityweb",
+    frameworkUrl: "Build/eb50be890cac6cbf87c992b11761de5a.framework.js.unityweb",
+    codeUrl: "Build/2a750b2c4eba78fb8c6f4b33413b57d7.wasm.unityweb",
     streamingAssetsUrl: "StreamingAssets",
     companyName: "ReachingTheSky",
     productName: "BIOBUZZ Driver Practice",
@@ -149,7 +149,7 @@
     .then(instance => { unity = instance; loading.hidden = true; canvas.focus(); })
     .catch(err => {
       loading.querySelector("strong").textContent = "The simulator could not start";
-      document.getElementById("loadText").textContent = String(err && err.message || err) + " Try a current Chrome, Edge, Firefox or Safari on a computer.";
+      document.getElementById("loadText").textContent = "Reload the page (Ctrl+Shift+R, or Cmd+Shift+R on a Mac). If it still fails, use a current Chrome, Edge, Firefox or Safari on a computer. Details: " + String(err && err.message || err).slice(0, 160);
     });
 
   canvas.addEventListener("pointerdown", () => canvas.focus());
