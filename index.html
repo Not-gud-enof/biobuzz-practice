@@ -65,6 +65,17 @@
   kbd { font: 500 12px var(--mono); padding: 1px 6px; border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; background: var(--bg); white-space: nowrap; }
   ol, ul { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
   .note { margin: 14px 0 0; font-size: 13px; color: var(--muted); max-width: 68ch; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .seg { display: inline-flex; gap: 0; }
+  .seg .btn { border-radius: 0; }
+  .seg .btn:first-child { border-radius: 8px 0 0 8px; }
+  .seg .btn:last-child { border-radius: 0 8px 8px 0; margin-left: -1px; }
+  .seg .btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: transparent; }
+  .recordings { margin-top: 20px; }
+  .recordings .count { font-size: 13px; padding: 1px 8px; border-radius: 10px; background: rgba(127,127,127,.2); vertical-align: 3px; }
+  .reclist { list-style: none; padding: 0; margin: 12px 0; display: grid; gap: 6px; }
+  .reclist li { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px 12px; border-radius: 8px; background: rgba(127,127,127,.1); }
+  .reclist li.empty { color: var(--muted); background: none; padding: 0; }
 </style>
 </head>
 <body>
@@ -72,7 +83,7 @@
   <header>
     <div class="eyebrow">FTC 2026–27 · BIOBUZZ simulator · driver practice</div>
     <h1>Drive the robot, <span>tip the Hive</span></h1>
-    <p class="lede">A 2:00 TELEOP period on the team's physics simulator, running in your browser. Plug in a gamepad (Logitech F310, Xbox or PlayStation), click the field, then move a stick to start the clock. You drive from the red alliance wall, like at a real match.</p>
+    <p class="lede">The team's physics simulator, running in your browser. Practise a 2:00 TELEOP, or drive a full match (AUTO, then TELEOP) to record it: your best matches teach the robot's AI how a good driver plays. Plug in a gamepad (Logitech F310, Xbox or PlayStation), click the field, then move a stick to start the clock. You drive from the red alliance wall, like at a real match.</p>
   </header>
 
   <div class="viewer">
@@ -87,11 +98,22 @@
     <div class="toolbar">
       <span class="pad" id="padStatus"><i></i><span>No gamepad yet: press any button on it</span></span>
       <span style="display:flex;gap:8px;flex-wrap:wrap">
+        <span class="seg" role="group" aria-label="Mode">
+          <button class="btn" id="modeTeleop" type="button" aria-pressed="true">TELEOP practice</button>
+          <button class="btn" id="modeFull" type="button" aria-pressed="false">Full match (recorded)</button>
+        </span>
         <button class="btn" id="restart" type="button">Restart match</button>
         <button class="btn primary" id="fullscreen" type="button">Full screen</button>
       </span>
     </div>
   </div>
+
+  <section class="recordings" id="recordings">
+    <h2>Your recordings <span class="count" id="recCount">0</span></h2>
+    <p class="note">Every finished match is recorded here (only in this tab, nothing is uploaded). <strong>Full matches</strong> with good scores are what the team needs: download them and send the files to the team (or put them in <code>train/human_demos/</code> in the repository). Drive cleanly - the AI copies what you do.</p>
+    <ul class="reclist" id="recList"><li class="empty">No finished matches yet.</li></ul>
+    <button class="btn primary" id="recAll" type="button" disabled>Download all (.json)</button>
+  </section>
 
   <div class="below">
     <section>
@@ -106,7 +128,7 @@
             <tr><td>Headless drive (on at start)</td><td><kbd>X</kbd> / Square (toggle)</td><td><kbd>G</kbd></td></tr>
             <tr><td>Intake / reverse</td><td>Right / left trigger (hold)</td><td><kbd>I</kbd> / <kbd>O</kbd> (toggle)</td></tr>
             <tr><td>Launcher speed</td><td>Right / left bumper (±20 %)</td><td><kbd>1</kbd>–<kbd>5</kbd>, <kbd>0</kbd> off</td></tr>
-            <tr><td>Aim lock on / off</td><td><kbd>Y</kbd> / Triangle</td><td><kbd>F</kbd></td></tr>
+            <tr><td>Aim lock on / off (turret aims at the Cell)</td><td><kbd>Y</kbd> / Triangle</td><td><kbd>F</kbd></td></tr>
             <tr><td>Fire</td><td><kbd>A</kbd> / Cross (hold)</td><td><kbd>Space</kbd> (hold)</td></tr>
             <tr><td>Restart match</td><td>Start / Options</td><td><kbd>R</kbd></td></tr>
             <tr><td>Camera</td><td colspan="2">Drag to orbit, scroll to zoom · <kbd>H</kbd> score details · <kbd>L</kbd> referee log · <kbd>K</kbd> controls</td></tr>
@@ -119,7 +141,8 @@
       <h2>How to score</h2>
       <ol>
         <li>Hold the intake and drive over Pollen (yellow). The robot holds at most 4 balls (G407).</li>
-        <li>Drive to about 1 m (3 ft) from your upward Cell, on the side it opens toward. Turn on aim lock: the robot turns to face the Cell and sets the flywheel speed. Hold fire; it shoots only when locked on.</li>
+        <li>Drive to about 1 m (3 ft) from your upward Cell, on the side it opens toward. Turn on aim lock: the turret turns to the Cell and the flywheel sets its speed; you keep driving. Hold fire; it shoots only when locked on.</li>
+        <li>Full match: in the 30 s AUTO, score your 4 pre-loaded Pollen and park in the Loading Zone (LEAVE 3 + TIP 20 + PARK 5). The robot stops for the 8 s transition, then TELEOP runs 2:00; park again at the end (5).</li>
         <li>8 Pollen in the upward Cell tips the Hive: 20 points, and the other Cell comes up.</li>
         <li>Score Flowers and the Garden as well. Your best score stays in this browser.</li>
       </ol>
@@ -128,7 +151,7 @@
   </div>
 </div>
 
-<script src="Build/ac145a2adf29b2542a261c7428b1320b.loader.js"></script>
+<script src="Build/72673e674d262a1f17df2a42fcdfbee1.loader.js"></script>
 <script>
   const canvas = document.getElementById("unity-canvas");
   const loading = document.getElementById("loading");
@@ -136,9 +159,9 @@
   let unity = null;
 
   createUnityInstance(canvas, {
-    dataUrl: "Build/e070a5a7577d6c1caa72860aafd27632.data.unityweb",
-    frameworkUrl: "Build/eb50be890cac6cbf87c992b11761de5a.framework.js.unityweb",
-    codeUrl: "Build/2a750b2c4eba78fb8c6f4b33413b57d7.wasm.unityweb",
+    dataUrl: "Build/9af4c7e1325296f41ba8dad0d4519b3b.data.unityweb",
+    frameworkUrl: "Build/6564620d818a77cc3ad19611482298f2.framework.js.unityweb",
+    codeUrl: "Build/f0eeef34943ce5b080f62cf52c71fdfd.wasm.unityweb",
     streamingAssetsUrl: "StreamingAssets",
     companyName: "ReachingTheSky",
     productName: "BIOBUZZ Driver Practice",
@@ -163,6 +186,45 @@
     if (unity) unity.SendMessage("UI", "Restart");
     canvas.focus();
   });
+
+  // ---- mode and recordings
+  const modeTeleop = document.getElementById("modeTeleop"), modeFull = document.getElementById("modeFull");
+  function setMode(full) {
+    modeTeleop.setAttribute("aria-pressed", String(!full));
+    modeFull.setAttribute("aria-pressed", String(full));
+    if (unity) unity.SendMessage("UI", "SetMode", full ? "full" : "teleop");
+    canvas.focus();
+  }
+  modeTeleop.addEventListener("click", () => setMode(false));
+  modeFull.addEventListener("click", () => setMode(true));
+
+  const recs = [], recList = document.getElementById("recList"), recAll = document.getElementById("recAll");
+  function download(name, text) {
+    const url = URL.createObjectURL(new Blob([text], { type: "application/json" }));
+    const a = Object.assign(document.createElement("a"), { href: url, download: name });
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+  // Called by the simulator when a match ends (Plugins/WebGL/BiobuzzDemo.jslib).
+  window.biobuzzDemo = (name, json) => {
+    let info = {};
+    try { const d = JSON.parse(json); info = { mode: d.mode, score: d.score.total, tips: d.score.tips, ticks: d.ticks.length }; } catch (e) {}
+    recs.push({ name, json, info });
+    if (recs.length === 1) recList.innerHTML = "";
+    const li = document.createElement("li");
+    li.innerHTML = `<span><b>${info.mode === "full" ? "Full match" : "TELEOP"}</b> · ${info.score ?? "?"} points · ${info.tips ?? 0} TIPs</span>`;
+    const b = Object.assign(document.createElement("button"), { className: "btn", type: "button", textContent: "Download" });
+    b.addEventListener("click", () => download(name, json));
+    li.appendChild(b);
+    recList.prepend(li);
+    document.getElementById("recCount").textContent = recs.length;
+    recAll.disabled = false;
+  };
+  recAll.addEventListener("click", () => {
+    const stamp = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, "");
+    download(`biobuzz_recordings_${stamp}.json`, "[" + recs.map(r => r.json).join(",") + "]");
+  });
+  window.addEventListener("beforeunload", e => { if (recs.length) { e.preventDefault(); e.returnValue = ""; } });
 
   const pad = document.getElementById("padStatus");
   function padState() {
