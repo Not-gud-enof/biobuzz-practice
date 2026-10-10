@@ -128,9 +128,8 @@
             <tr><td>Headless drive (on at start)</td><td><kbd>X</kbd> / Square (toggle)</td><td><kbd>G</kbd></td></tr>
             <tr><td>Intake / reverse</td><td>Right / left trigger (hold)</td><td><kbd>I</kbd> / <kbd>O</kbd> (toggle)</td></tr>
             <tr><td>Pollen launcher speed (Nectar spins up when you fire it, or with aim lock)</td><td>Right / left bumper (±20 %)</td><td><kbd>1</kbd>–<kbd>5</kbd>, <kbd>0</kbd> off</td></tr>
-            <tr><td>Aim lock on / off (both turrets aim at the Cell)</td><td><kbd>Y</kbd> / Triangle</td><td><kbd>F</kbd></td></tr>
-            <tr><td>Fire Pollen (rear turret)</td><td><kbd>A</kbd> / Cross (hold)</td><td><kbd>Space</kbd> (hold)</td></tr>
-            <tr><td>Fire own Nectar (front turret)</td><td>D-pad up (hold)</td><td><kbd>V</kbd> (hold)</td></tr>
+            <tr><td>Aim lock on / off (both turrets lead the Cell, so you can shoot while driving)</td><td><kbd>Y</kbd> / Triangle</td><td><kbd>F</kbd></td></tr>
+            <tr><td>Fire (both turrets: Pollen rear, own Nectar front - each fires when it holds its kind)</td><td><kbd>A</kbd> / Cross (hold)</td><td><kbd>Space</kbd> (hold)</td></tr>
             <tr><td>Restart match</td><td>Start / Options</td><td><kbd>R</kbd></td></tr>
             <tr><td>Camera</td><td colspan="2">Drag to orbit, scroll to zoom · <kbd>H</kbd> score details · <kbd>L</kbd> referee log · <kbd>K</kbd> controls</td></tr>
           </tbody>
@@ -142,7 +141,7 @@
       <h2>How to score</h2>
       <ol>
         <li>Hold the intake and drive over Pollen (yellow) and your own Nectar. The full-width intake takes anything, up to 4 balls in any mix (G407). Don't take the opponent's Nectar (G408): reverse the intake to push it back out.</li>
-        <li>Drive to about 1 m (3 ft) from your upward Cell, on the side it opens toward. Turn on aim lock: both turrets turn to the Cell and both flywheels set their speed; you keep driving. Fire Pollen from the rear turret and Nectar from the front one; each shoots only when locked on.</li>
+        <li>Drive to about 1 m (3 ft) from your upward Cell, on the side it opens toward. Turn on aim lock: both turrets lead the Cell and both flywheels follow your motion, so you can shoot while driving slowly past. Hold fire: each turret shoots when it holds its kind and its predicted landing is on target (the HUD shows the predicted miss). The box on the left turns green when you hold 4 balls and red when you hold none.</li>
         <li>Full match: in the 30 s AUTO, score your 4 pre-loaded Pollen and park in the Loading Zone (LEAVE 3 + TIP 20 + PARK 5). The robot stops for the 8 s transition, then TELEOP runs 2:00; park again at the end (5).</li>
         <li>8 Pollen in the upward Cell tips the Hive: 20 points, and the other Cell comes up. A Nectar weighs as much as 1.66 Pollen, so Nectar tips it sooner, and your human player enters a new Nectar after every tip.</li>
         <li>Score Flowers and the Garden as well. Your best score stays in this browser.</li>
@@ -152,7 +151,7 @@
   </div>
 </div>
 
-<script src="Build/ebcb7bdf6cc0fbd23ea75a12450114d2.loader.js"></script>
+<script src="Build/07d54949dd7812937569f5ecc1235b68.loader.js"></script>
 <script>
   const canvas = document.getElementById("unity-canvas");
   const loading = document.getElementById("loading");
@@ -160,9 +159,9 @@
   let unity = null;
 
   createUnityInstance(canvas, {
-    dataUrl: "Build/cdb59f3ec8bed233966babbb0e8dc2c2.data.unityweb",
-    frameworkUrl: "Build/5540101e0524bf319c2e7fcde5ac1ca4.framework.js.unityweb",
-    codeUrl: "Build/8afd82535f8923714917293d8ae31901.wasm.unityweb",
+    dataUrl: "Build/c66a18c8eb56ac0242fb715c521ec7db.data.unityweb",
+    frameworkUrl: "Build/9cebe9780be87367c47be31877fe5b71.framework.js.unityweb",
+    codeUrl: "Build/4db8d15217c3c8c972803d4ed4c41afc.wasm.unityweb",
     streamingAssetsUrl: "StreamingAssets",
     // Storage key for saved best scores and recordings (the project's old name). Changing it would wipe drivers'
     // saved data on the live site, so it stays.
